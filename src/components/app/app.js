@@ -104,6 +104,7 @@ class App extends Component {
         const employees = data.length;
         const increased = data.filter(item => item.increase === true).length
 
+
         return(
             <div className="app">
                 <AppInfo
