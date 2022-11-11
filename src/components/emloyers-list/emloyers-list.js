@@ -16,6 +16,7 @@ const EmployersList = ({data, onDelete, onToggleProp}) => {
                 // onToggleIncrease={() => onToggleIncrease(id)}
                 // onToggleRise={() => onToggleRise(id)}
                 onToggleProp={(event) => onToggleProp(id, event.currentTarget.getAttribute('data-toggle'))}/>
+                /* event.currentTarget нам нужен вместо обычного event.turget чтобы невилировать всплытие события и получать только тот элемент который нам действительно нужен */
         )
     });
 

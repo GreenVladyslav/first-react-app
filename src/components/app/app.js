@@ -18,7 +18,8 @@ class App extends Component {
                 {name: 'Anderson S.', salary: 5000, increase: true, rise: false, id: 3},
                 {name: 'Jake P.', salary: 100, increase: false, rise: false, id: 4},
             ],
-            award: ''
+            term: '',
+            filter: 'all'
         }
         this.maxId = 5
     }
@@ -99,12 +100,59 @@ class App extends Component {
         }))
     }
 
+    searchEmp = (items, term) => {
+        if (term.length === 0) return items;
+
+        return items.filter(item => {
+            return item.name.indexOf(term) > -1 /* Если найдено вернет индекс где было найдено (вернет массив)term - кусочек строки */
+        })
+    }
+
+    onUpdateSearch = (term) => {
+        this.setState({term});
+    }
+
+    filterPost = (items, filter) => {
+        switch (filter) {
+            case 'rise':
+                return items.filter(item => item.rise === true);
+            case 'moreThen1000':
+                return items.filter(item => item.salary >= 1000);
+            default:
+                return items;
+        }
+    }
+
+    onFilterSelect = (filter) => {
+        this.setState({filter});
+    }
+
+
+    // filterEmp = (items, filter) => {
+    //     if (filter === "rise") {
+    //         return items.filter(item => {
+    //             return item.rise === true
+    //         })
+    //     } else if (filter === "salary") {
+    //         return items.filter(item => {
+    //             return item.salary >= 1000
+    //         })
+    //     } else if (filter === "all") {
+    //         return items;
+    //     }
+    // }
+
+    // onUpdateFilterEmp = (filter) => {
+    //     this.setState({filter});
+    // }
+
+
     render() {
-        const {data} = this.state;
+        const {data, term, filter} = this.state;
         const employees = data.length;
         const increased = data.filter(item => item.increase === true).length
-
-
+        const visibleData = this.filterPost(this.searchEmp(data, term), filter); /* отфильтрованый массив который приходит по строчке из другого компонента */
+        /* Сначала у нас идет филтрацию по поиску, а затем по филтьтру в итоге получаем комбинированый результат  */
         return(
             <div className="app">
                 <AppInfo
@@ -112,12 +160,15 @@ class App extends Component {
                     increased={increased}/>
                 
                 <div className="search-panel">
-                    <SearchPanel/>
-                    <AppFilter/>
+                    <SearchPanel 
+                        onUpdateSearch={this.onUpdateSearch}/>
+                    <AppFilter
+                        filter={filter}
+                        onFilterSelect={this.onFilterSelect}/>
                 </div>
     
                 <EmployersList 
-                    data={data}
+                    data={visibleData}
                     onDelete={this.deleteItem}
                     onToggleProp={this.onToggleProp}/>
                 <EmployersAddForm
